@@ -34,6 +34,7 @@ namespace DB_Project
 
         private void Report_Load(object sender, EventArgs e)
         {
+            reportDataTable.Clear();
             calculateRevenue();
             fillReportGrid();
             calculateNetLosses();
@@ -42,7 +43,7 @@ namespace DB_Project
 
         private void searchButton_Click(object sender, EventArgs e)
         {
-
+            Report_Load(sender, e);
         }
 
         private void calculateRevenue()
@@ -78,12 +79,14 @@ namespace DB_Project
                 summedExpense = decimal.Parse(reader[0].ToString());
             }
             profitTextBox.Text = (decimal.Parse(revenueTextBox.Text) - summedExpense).ToString();
+            reader.Close();
         }
 
         private void fillReportGrid()
         {
             SqlCommand cmdFillReport = DBConnection.CreateCommand();
-            cmdFillReport.CommandText = "SELECT Items.ItemID, Items.Name, DatePurchased, MeasurementUnit, ActualQuantity, ExpectedQuantity, Price FROM Actual_Inventory JOIN Items ON Actual_Inventory.ItemID = Items.ItemID";
+            cmdFillReport.CommandText = "SELECT Items.ItemID, Items.Name, DatePurchased, MeasurementUnit, ActualQuantity, ExpectedQuantity, Price FROM Actual_Inventory JOIN Items ON Actual_Inventory.ItemID = Items.ItemID WHERE Items.Name LIKE @search";
+            cmdFillReport.Parameters.AddWithValue("@search", "%" + searchBox.Text + "%");
             SqlDataReader reader = cmdFillReport.ExecuteReader();
 
             while (reader.Read())

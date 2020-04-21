@@ -48,7 +48,6 @@ namespace DB_Project
         {
             DishesAndRecipes frm = new DishesAndRecipes(sqlConnection1);
             frm.ShowDialog();
-
         }
 
         private void ticketBtn_Click(object sender, EventArgs e)
